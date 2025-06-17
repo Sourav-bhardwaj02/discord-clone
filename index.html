@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Clone</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Username Modal -->
+    <div id="usernameModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Welcome to Discord Clone</h2>
+                <p>Enter your username to start chatting</p>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <input type="text" id="usernameInput" placeholder="Enter your username" maxlength="20">
+                    <div class="input-error" id="usernameError"></div>
+                </div>
+                <button class="btn-primary" onclick="setUsername()">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Start Chatting
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Server List -->
+        <div class="server-list">
+            <div class="server-icon active" data-server="main">
+                <i class="fas fa-home"></i>
+            </div>
+            <div class="server-divider"></div>
+            <div class="server-icon" data-server="gaming">
+                <i class="fas fa-gamepad"></i>
+            </div>
+            <div class="server-icon" data-server="music">
+                <i class="fas fa-music"></i>
+            </div>
+            <div class="server-icon add-server">
+                <i class="fas fa-plus"></i>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="server-header">
+                <div class="server-name" id="serverName">My Discord Server</div>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+
+            <div class="channels-container">
+                <!-- Text Channels -->
+                <div class="channel-category">
+                    <i class="fas fa-chevron-down"></i>
+                    <span>Text Channels</span>
+                    <button class="add-channel-btn" onclick="addChannel('text')">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <ul class="channel-list" id="textChannelList">
+                    <li class="channel-item active" data-channel="general" data-type="text">
+                        <i class="fas fa-hashtag"></i>
+                        <span>general</span>
+                        <div class="channel-actions">
+                            <button class="channel-action-btn" onclick="deleteChannel('general')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </li>
+                    <li class="channel-item" data-channel="random" data-type="text">
+                        <i class="fas fa-hashtag"></i>
+                        <span>random</span>
+                        <div class="channel-actions">
+                            <button class="channel-action-btn" onclick="deleteChannel('random')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </li>
+                    <li class="channel-item" data-channel="memes" data-type="text">
+                        <i class="fas fa-hashtag"></i>
+                        <span>memes</span>
+                        <div class="channel-actions">
+                            <button class="channel-action-btn" onclick="deleteChannel('memes')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+
+                <!-- Voice Channels -->
+                <div class="channel-category">
+                    <i class="fas fa-chevron-down"></i>
+                    <span>Voice Channels</span>
+                    <button class="add-channel-btn" onclick="addChannel('voice')">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <ul class="channel-list" id="voiceChannelList">
+                    <li class="channel-item" data-channel="general-voice" data-type="voice">
+                        <i class="fas fa-volume-up"></i>
+                        <span>General</span>
+                        <div class="channel-actions">
+                            <button class="channel-action-btn" onclick="deleteChannel('general-voice')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </li>
+                    <li class="channel-item" data-channel="music-room" data-type="voice">
+                        <i class="fas fa-volume-up"></i>
+                        <span>Music Room</span>
+                        <div class="channel-actions">
+                            <button class="channel-action-btn" onclick="deleteChannel('music-room')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- User Area -->
+            <div class="user-area">
+                <div class="user-avatar" id="userAvatar"></div>
+                <div class="user-info">
+                    <div class="username" id="displayUsername">User</div>
+                    <div class="user-status">
+                        <div class="status-indicator online"></div>
+                        <span>Online</span>
+                    </div>
+                </div>
+                <div class="user-controls">
+                    <button class="user-control-btn" title="Mute">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button class="user-control-btn" title="Deafen">
+                        <i class="fas fa-headphones"></i>
+                    </button>
+                    <button class="user-control-btn" title="Settings">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="main-chat">
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <div class="chat-header-left">
+                    <i class="channel-icon fas fa-hashtag"></i>
+                    <span class="channel-name" id="currentChannelName">general</span>
+                    <div class="channel-divider"></div>
+                    <span class="channel-topic">Welcome to the general channel! Chat with everyone here.</span>
+                </div>
+                <div class="chat-header-right">
+                    <button class="header-icon-btn" title="Start Voice Call">
+                        <i class="fas fa-phone"></i>
+                    </button>
+                    <button class="header-icon-btn" title="Start Video Call">
+                        <i class="fas fa-video"></i>
+                    </button>
+                    <button class="header-icon-btn" title="Pinned Messages">
+                        <i class="fas fa-thumbtack"></i>
+                    </button>
+                    <button class="header-icon-btn" title="Add Friends">
+                        <i class="fas fa-user-plus"></i>
+                    </button>
+                    <button class="header-icon-btn" title="Member List" id="memberListToggle">
+                        <i class="fas fa-users"></i>
+                    </button>
+                    <div class="search-bar">
+                        <input type="text" placeholder="Search">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <button class="header-icon-btn" title="Inbox">
+                        <i class="fas fa-inbox"></i>
+                    </button>
+                    <button class="header-icon-btn" title="Help">
+                        <i class="fas fa-question-circle"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="chat-messages" id="messages">
+                <div class="welcome-message">
+                    <div class="welcome-icon">
+                        <i class="fas fa-hashtag"></i>
+                    </div>
+                    <h3>Welcome to #<span id="welcomeChannelName">general</span>!</h3>
+                    <p>This is the start of the #<span id="welcomeChannelName2">general</span> channel.</p>
+                </div>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="chat-input-container">
+                <div class="chat-input">
+                    <div class="chat-input-inner">
+                        <button class="input-action-btn" title="Upload File">
+                            <i class="fas fa-plus-circle"></i>
+                        </button>
+                        <input type="text" id="messageInput" placeholder="Message #general" autocomplete="off">
+                        <div class="chat-input-actions">
+                            <button class="input-action-btn" title="Gift Nitro">
+                                <i class="fas fa-gift"></i>
+                            </button>
+                            <button class="input-action-btn" title="GIF">
+                                <i class="fas fa-images"></i>
+                            </button>
+                            <button class="input-action-btn" title="Emoji">
+                                <i class="fas fa-smile"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="typing-indicator" id="typingIndicator"></div>
+            </div>
+        </div>
+
+        <!-- Member List -->
+        <div class="member-list" id="memberList">
+            <div class="member-section">
+                <div class="member-section-title">
+                    Online — <span id="onlineCount">1</span>
+                </div>
+                <div class="member-list-content" id="onlineMembers">
+                    <div class="member-item">
+                        <div class="member-avatar">
+                            <div class="member-avatar-inner" id="memberAvatar"></div>
+                            <div class="status-indicator online"></div>
+                        </div>
+                        <div class="member-info">
+                            <div class="member-name" id="memberName">User</div>
+                            <div class="member-activity">Playing Discord Clone</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-menu-item" onclick="editMessage()">
+            <i class="fas fa-edit"></i>
+            Edit Message
+        </div>
+        <div class="context-menu-item delete" onclick="deleteMessage()">
+            <i class="fas fa-trash"></i>
+            Delete Message
+        </div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" onclick="copyMessage()">
+            <i class="fas fa-copy"></i>
+            Copy Text
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
